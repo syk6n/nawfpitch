@@ -1,0 +1,5 @@
+{
+  "name": "nawf pitch",
+  "description": "A continuous, editorial-style horizontal scroll experience featuring a quote by Keanu Reeves, animated with GSAP ScrollTrigger.",
+  "requestFramePermissions": []
+}

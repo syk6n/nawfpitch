@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -10,12 +11,12 @@ const VIDEOS = [
   {
     id: 1,
     src: "https://res.cloudinary.com/dn8arfwkl/video/upload/v1767424415/Ugc2_xrnv5p.mp4",
-    label: "PERSPECTIVE 01"
+    label: "01"
   },
   {
     id: 2,
     src: "https://res.cloudinary.com/dn8arfwkl/video/upload/f_auto,q_auto,w_720,fps_30/UGC1_qgvy1e.mp4",
-    label: "PERSPECTIVE 02"
+    label: "02"
   }
 ];
 
@@ -23,61 +24,63 @@ const POST_GALLERY_VIDEOS = [
   {
     id: 3,
     src: "https://res.cloudinary.com/dn8arfwkl/video/upload/v1767782537/1misc_irnvug.mp4",
-    label: "PERSPECTIVE 03"
+    label: "03"
   },
   {
     id: 4,
     src: "https://res.cloudinary.com/dn8arfwkl/video/upload/v1767782536/2misc_sifsgr.mp4",
-    label: "PERSPECTIVE 04"
+    label: "04"
   }
 ];
 
 // --- Gallery Data ---
 const GALLERY_IMAGES = [
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762033/product_shots_1_ytmxlh.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762032/product_shots_10_rzddzj.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762032/product_shots_11_tllysc.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762032/product_shots_12_edkmhz.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762030/product_shots_13_wyaikt.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762033/product_shots_14_v4nskz.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762033/product_shots_15_yrpy9y.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762266/product_shots_155_bpl6t8.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762030/product_shots_2_i871a8.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762033/product_shots_3_qneuvq.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762031/product_shots_4_eqslbr.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762031/product_shots_5_yivovu.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762030/product_shots_6_y5vxfk.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762030/product_shots_7_ctkxuo.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762031/product_shots_8_odij4s.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762030/product_shots_9_jz7rar.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762035/product_shots_16_ebmwya.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762459/AIRA_FARMLEY_02_ae1dbm.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762458/AIRA_71.1.jpeg_ubazmy.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767773776/AIRA_FARMLEY_SHOOT_06_uilvvi.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762454/AIRA_FARMLEY_PHOTOSHOOT_04_emqhma.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762454/AIRA_FARMLEY_01_kszjto.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762453/AIRA_FARMLEY_PHOTOSHOOT_03_pdkx7m.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762452/AIRA_FARMLEY_PHOTOSHOOT_04.1_wh4iww.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762451/AIRA_FARMLEY_SHOOT_05.1_bpnvvq.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762450/AIRA_FARMLEY_SHOOT_05_kjj13z.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762419/DHAIRYA_FARMLEY_04_qaed1x.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762418/DHAIRYA_FARMLEY_SHOOT_05_k6ky02.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762417/DHAIRYA_FARMLEY_SHOOT_06_chogha.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762416/DHAIRYA_FARMLEY_03_rnfhz2.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762416/DHAIRYA_FARMLEY_SHOOT_05.1_io0nrl.jpg",
-  "https://res.cloudinary.com/dn8arfwkl/image/upload/v1767762416/DHAIRYA_FARMLEY_02_aiawhf.jpg"
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_2_i871a8.jpg?updatedAt=1767949159926",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_3_qneuvq.jpg?updatedAt=1767949160237",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_9_jz7rar.jpg?updatedAt=1767949160344",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_13_wyaikt.jpg?updatedAt=1767949160509",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_8_odij4s.jpg?updatedAt=1767949160760",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_4_eqslbr.jpg?updatedAt=1767949160806",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_11_tllysc.jpg?updatedAt=1767949161367",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_10_rzddzj.jpg?updatedAt=1767949161015",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_12_edkmhz.jpg?updatedAt=1767949160935",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_15_yrpy9y.jpg?updatedAt=1767949161003",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_7_ctkxuo.jpg?updatedAt=1767949161049",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_5_yivovu.jpg?updatedAt=1767949161051",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_6_y5vxfk.jpg?updatedAt=1767949161200",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_14_v4nskz.jpg?updatedAt=1767949161160",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_1_ytmxlh.jpg?updatedAt=1767949161413",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_16_ebmwya.jpg?updatedAt=1767949161978",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/product%20shots/product_shots_155_bpl6t8.jpg?updatedAt=1767949165415",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_02_ae1dbm.jpg?updatedAt=1767949160089",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_SHOOT_05_kjj13z.jpg?updatedAt=1767949160104",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_SHOOT_05.1_bpnvvq.jpg?updatedAt=1767949160098",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_PHOTOSHOOT_04_emqhma.jpg?updatedAt=1767949160749",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_01_kszjto.jpg?updatedAt=1767949160868",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_PHOTOSHOOT_03_pdkx7m.jpg?updatedAt=1767949160857",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_PHOTOSHOOT_04.1_wh4iww.jpg?updatedAt=1767949161176",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_FARMLEY_SHOOT_06_uilvvi.jpg?updatedAt=1767949161829",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/aira%20product%20shots/AIRA_71.1.jpeg_ubazmy.jpg?updatedAt=1767949167749",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/dhairya%20product%20shots/DHAIRYA_FARMLEY_03_rnfhz2.jpg?updatedAt=1767949159797",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/dhairya%20product%20shots/DHAIRYA_FARMLEY_SHOOT_05_k6ky02.jpg?updatedAt=1767949159879",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/dhairya%20product%20shots/DHAIRYA_FARMLEY_02_aiawhf.jpg?updatedAt=1767949159870",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/dhairya%20product%20shots/DHAIRYA_FARMLEY_SHOOT_05.1_io0nrl.jpg?updatedAt=1767949160242",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/dhairya%20product%20shots/DHAIRYA_FARMLEY_SHOOT_06_chogha.jpg?updatedAt=1767949160403",
+  "https://ik.imagekit.io/vujf7cl5h/pitch%20folder/images/dhairya%20product%20shots/DHAIRYA_FARMLEY_04_qaed1x.jpg?updatedAt=1767949161215"
 ];
 
-// --- Sub-Component: Lightbox ---
+// --- Sub-Component: Lightbox (Portal-based) ---
 const Lightbox = ({ src, onClose }: { src: string | null, onClose: () => void }) => {
-  const [isActive, setIsActive] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (src) {
-      setIsActive(true);
       document.body.style.overflow = "hidden";
     } else {
-      setIsActive(false);
       document.body.style.overflow = "";
     }
     return () => {
@@ -85,30 +88,44 @@ const Lightbox = ({ src, onClose }: { src: string | null, onClose: () => void })
     };
   }, [src]);
 
-  if (!src && !isActive) return null;
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && src) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [src, onClose]);
 
-  return (
-    <div 
-      className={`fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl transition-opacity duration-500 ${src ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+  if (!mounted || !src) return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black"
       onClick={onClose}
     >
-      <div className="relative max-w-[95vw] max-h-[95vh] p-2 flex flex-col items-center">
-        {src && (
-            <img 
-                src={src} 
-                alt="Full Screen View" 
-                className="w-auto h-auto max-w-full max-h-[85vh] object-contain rounded-sm shadow-2xl select-none"
-            />
-        )}
-        <div className="mt-6 text-center">
-             <span className="font-mono text-[10px] text-white/40 tracking-[0.2em] uppercase border border-white/10 px-3 py-1 rounded-full">Click anywhere to close</span>
-        </div>
+      <img
+        src={src}
+        alt="Full Screen View"
+        className="max-w-[98vw] max-h-[98vh] object-contain select-none"
+        onClick={(e) => e.stopPropagation()}
+      />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+        <span className="font-mono text-[10px] text-white/40 tracking-[0.2em] uppercase border border-white/10 px-3 py-1 rounded-full">
+          Press ESC or click outside to close
+        </span>
       </div>
-      
-      <button className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors p-4 group">
-        <svg className="w-10 h-10 transform group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M6 18L18 6M6 6l12 12"></path></svg>
+      <button
+        className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors p-4 group"
+        onClick={onClose}
+      >
+        <svg className="w-10 h-10 transform group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
       </button>
-    </div>
+    </div>,
+    document.body
   );
 };
 
@@ -436,11 +453,11 @@ const HorizontalVideoSection: React.FC = () => {
           {/* Intro Text Block */}
           <div className="shrink-0 w-[80vw] md:w-[30vw] mr-[10vw] flex flex-col justify-center">
             <h2 className="font-sans font-black text-4xl md:text-6xl tracking-tighter text-white mix-blend-difference mb-6">
-              SHIFT<br/>PERSPECTIVE
+              SLOW<br/>DOWN
             </h2>
             <div className="w-12 h-1 bg-white/20 mb-6" />
             <p className="font-mono text-sm text-white/60 max-w-xs leading-relaxed">
-              When we change the lens, we change the output. Observe the process in motion.
+              Good things take time and a sharper eye.
             </p>
           </div>
 
@@ -458,7 +475,7 @@ const HorizontalVideoSection: React.FC = () => {
           <div className="shrink-0 w-[30vw] flex flex-col items-center justify-center opacity-40 mx-[5vw]">
              <div className="h-24 w-px bg-white/50 mb-4" />
              <span className="font-mono text-xs tracking-widest uppercase text-white rotate-90 whitespace-nowrap">
-                The Artefacts
+                Farmley's Gallery
              </span>
              <div className="h-24 w-px bg-white/50 mt-4" />
           </div>
@@ -499,7 +516,7 @@ const HorizontalVideoSection: React.FC = () => {
           <div className="shrink-0 w-[30vw] flex flex-col items-center justify-center opacity-40 mx-[5vw]">
              <div className="h-24 w-px bg-white/50 mb-4" />
              <span className="font-mono text-xs tracking-widest uppercase text-white rotate-90 whitespace-nowrap">
-                In Motion
+                SOME MORE
              </span>
              <div className="h-24 w-px bg-white/50 mt-4" />
           </div>

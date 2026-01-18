@@ -14,6 +14,7 @@ import FarmleySection from './components/FarmleySection';
 import ClosingSection from './components/ClosingSection';
 import TeaserSection from './components/TeaserSection';
 import ContactSection from './components/ContactSection';
+import NawfLogo from './components/NawfLogo';
 
 const App: React.FC = () => {
   return (
@@ -72,6 +73,9 @@ const App: React.FC = () => {
           Scroll Down &darr;
         </p>
       </div>
+
+      {/* Persistent Logo */}
+      <NawfLogo />
     </main>
   );
 };
